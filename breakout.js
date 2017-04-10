@@ -26,6 +26,7 @@ var brickColumnCount = 5;
 var brickPadding = 10;
 var brickOffsetY = 30;
 var brickOffsetX = 30;
+var brickStrength = 2;
 var brickWidth = (canvas.width-(brickOffsetX*2)
 	-(brickPadding*(brickColumnCount-1)))/brickColumnCount;
 var brickHeight = ((canvas.height*0.4)-(brickOffsetY)
@@ -35,7 +36,7 @@ var bricks = [];
 for(c=0; c<brickColumnCount; c++) {
 	bricks[c] = [];
 	for(r=0; r<brickRowCount; r++) {
-		bricks[c][r] = { x: 0, y: 0, status: 1}
+		bricks[c][r] = { x: 0, y: 0, status: brickStrength}
 	}
 }
 
@@ -89,11 +90,11 @@ function collisionDetection() {
             	x < b.x+brickWidth && 
             	y > b.y && 
             	y < b.y+brickHeight &&
-            	b.status == 1) {
+            	b.status >= 1) {
                 	dy = -dy;
-                	b.status = 0;
+                	b.status--;
                 	score++;
-                	if(score == brickRowCount*brickColumnCount) {
+                	if(score == brickRowCount*brickColumnCount*brickStrength) {
                         alert("YOU WIN, CONGRATULATIONS!");
                         document.location.reload();
                     }
@@ -120,17 +121,21 @@ function drawLives() {
 function drawBricks() {
     for(c=0; c<brickColumnCount; c++) {
         for(r=0; r<brickRowCount; r++) {
-        	if(bricks[c][r].status == 1) {
+        	if(bricks[c][r].status >= 1) {
         		var brickX = (c*(brickWidth+brickPadding)+brickOffsetX);
-			var brickY = (r*(brickHeight+brickPadding)+brickOffsetY);
-            bricks[c][r].x = brickX;
-            bricks[c][r].y = brickY;
-            ctx.beginPath();
-            ctx.rect(brickX, brickY, brickWidth, brickHeight);
-            ctx.fillStyle = "#0095DD";
-            ctx.fill();
-            ctx.closePath();
-        	}
+				var brickY = (r*(brickHeight+brickPadding)+brickOffsetY);
+	            bricks[c][r].x = brickX;
+	            bricks[c][r].y = brickY;
+	            ctx.beginPath();
+	            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+	            if(bricks[c][r].status == 2) {
+	            	ctx.fillStyle = "#0095DD";
+	            } else {
+	            	ctx.fillStyle = "#ABDFFF";
+	            }
+	            ctx.fill();
+	            ctx.closePath();
+	        }
         }
     }
 }
